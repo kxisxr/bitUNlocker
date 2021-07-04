@@ -79,12 +79,10 @@ echo -e ' '
 lsblk -o NAME,SIZE,MODEL,FSTYPE | grep -v -E "VBOX|VMWARE" | grep -v -E "pkt|sda|loop"
 echo -e ' '
 
-
 encryptedDisks=$(lsblk -o NAME,SIZE,MODEL,FSTYPE | grep -v -E "loop|pkt|VBOX|VMWARE" | grep BitLocker | awk '{print $1}')
 
 echo -e -n "${greenColour}"'[*] Eligible encrypted disks:'"${endColour}" "${purpleColour}"$encryptedDisks"${endColour}\n"
 echo -e ' '
-
 
 echo -e -n "${yellowColour}"'Select the disk to unlock:' "${endColour}"
 read disk
@@ -137,11 +135,6 @@ sleep 0.5
 
 sudo dislocker -v -V /dev/$disk -u$password /mnt/bitlocker
 sleep 0.5
-
-
-
-
-
 
 sudo mount --rw -o loop /mnt/bitlocker/dislocker-file /mnt/$dir
 sleep 0.5
