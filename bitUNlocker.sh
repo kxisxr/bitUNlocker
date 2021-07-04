@@ -76,11 +76,12 @@ sleep 0.5
 echo -e -n "${greenColour}"'Disks available: '"${endColour}"
 echo -e ' '
 
-lsblk -o NAME,SIZE,MODEL,PARTTYPENAME,HOTPLUG | grep -v -E "VBOX|VMWARE" | grep -v -E "pkt|sda"
+lsblk -o NAME,SIZE,MODEL,FSTYPE | grep -v -E "VBOX|VMWARE" | grep -v -E "pkt|sda|loop"
 echo -e ' '
 
 
-encryptedDisks=$(sudo dislocker-find | sed 's/\/dev\///g')
+encryptedDisks=$(lsblk -o NAME,SIZE,MODEL,FSTYPE | grep -v -E "loop|pkt|VBOX|VMWARE" | grep BitLocker | awk '{print $1}')
+
 echo -e -n "${greenColour}"'[*] Eligible encrypted disks:'"${endColour}" "${purpleColour}"$encryptedDisks"${endColour}\n"
 echo -e ' '
 
@@ -215,5 +216,5 @@ sleep 0.5
 sudo mount -t $format $disk2 $dir 2>/dev/null
 
 echo -e -n "${purpleColour}"'Disk mounted on:'"${endColour}" "${turquoiseColour}"$PWD/$dir "${endColour}"
-
+echo -e ' '
 fi
