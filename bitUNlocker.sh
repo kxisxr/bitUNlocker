@@ -138,6 +138,11 @@ sleep 0.5
 sudo dislocker -v -V /dev/$disk -u$password /mnt/bitlocker
 sleep 0.5
 
+
+
+
+
+
 sudo mount --rw -o loop /mnt/bitlocker/dislocker-file /mnt/$dir
 sleep 0.5
 
@@ -187,22 +192,31 @@ echo -e -n "${greenColour}"'Name of the directory to mount: '"${endColour}"
 read dir
 echo -e ' '
 
-echo -e -n "${greenColour}"'Type the password: '"${endColour}"
-read pass
+unset password
+prompt=$(echo -e -n "${yellowColour}"'Enter the password: '"${endColour}")
 echo -e ' '
-sleep 0.5
+while IFS= read -p "$prompt" -r -s -n 1 char
+do
+    if [[ $char == $'\0' ]]
+    then
+        break
+    fi
+    prompt='*'
+    password+="$char"
+done
+echo -e '\n'
 
 echo -e -n "${greenColour}"'Creating the dislocker file...'"${endColour}"
 echo -e ' '
 sleep 0.5
 
-sudo dislocker -v -V $disk -u$pass -- $dir 2>/dev/null
+sudo dislocker -v -V $disk -u$password -- $dir 2>/dev/null
 
 echo -e -n "${greenColour}"'Attaching the image... '"${endColour}"
 echo -e ' '
 sleep 0.5
  
-sudo hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount $dir/dislocker-file 2>/dev/null
+sudo hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount $dir/dislocker-file >> /dev/null 2>&1
 
 disk2=$(diskutil list | grep image | awk '{print $1}')
 format=$(diskutil info $disk2 | grep "Bundle" | awk '{print $3}')
