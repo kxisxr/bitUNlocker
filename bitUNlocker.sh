@@ -49,7 +49,7 @@ if ! command -v dislocker &> /dev/null
 then
     echo -e -n "${greenColour}"'Installing' "${blueColour}"'dislocker...'"${endColour}""${endColour}"
     echo -e ' '
-    sudo apt-get install dislocker -y 2>/dev/null
+    sudo apt-get install dislocker -y > /dev/null 2>&1
     echo -e ' '
     sleep 0.5
 else
